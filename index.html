@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Struk wondr - 15 Bank</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root { --primary-color: #f37021; }
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: #2c3e50;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* PANEL KONTROL */
+        .admin-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+        .admin-panel h3 { margin-top: 0; color: #333; font-size: 16px; border-bottom: 2px solid var(--primary-color); padding-bottom: 5px; text-transform: uppercase; }
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; font-size: 11px; color: #666; margin-bottom: 3px; font-weight: bold; }
+        .input-group input, .input-group select {
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none;
+        }
+        .row-input { display: flex; gap: 10px; }
+        
+        .btn-action { 
+            color: white; border: none; padding: 14px; 
+            width: 100%; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px;
+            text-transform: uppercase;
+            background: #27ae60;
+            font-size: 14px;
+        }
+
+        /* STRUK AREA */
+        #capture-area {
+            background-color: white;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .receipt-container {
+            width: 380px;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 35px 22px;
+        }
+
+        .watermark-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('watermark.png'); 
+            background-repeat: repeat;
+            background-size: 100% auto; 
+            opacity: 0.08;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .content { position: relative; z-index: 1; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo-wondr { width: 165px; height: auto; margin-bottom: 40px; }
+        .status-text { font-size: 19px; font-weight: 600; color: #333; }
+        .amount-main { font-size: 34px; font-weight: 800; margin: 6px 0; color: #000; letter-spacing: -0.5px; }
+        .info-small { font-size: 12px; color: #777; margin: 1px 0; }
+
+        hr { border: none; border-top: 1px solid #f2f2f2; margin: 15px 0; }
+        .section-title { font-size: 14px; font-weight: bold; color: #555; margin-bottom: 5px; }
+        .name-bold { font-size: 17px; font-weight: bold; color: #000; text-transform: uppercase; }
+        .sub-detail { font-size: 14px; color: #444; margin-top: 2px; }
+
+        .data-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
+        .label { color: #888; }
+        .value { color: #222; text-align: right; font-weight: 500; }
+        .dashed-line { border-top: 1.5px dashed #eee; margin: 25px 0; }
+        .total-row { display: flex; justify-content: space-between; align-items: center; }
+        .total-label { font-size: 17px; color: #666; }
+        .total-value { font-size: 26px; font-weight: 800; color: #000; }
+    </style>
+</head>
+<body>
+
+<div class="admin-panel">
+    <h3>⚙️ EDITOR STRUK WONDR</h3>
+    
+    <div class="row-input">
+        <div class="input-group" style="flex:2">
+            <label>NAMA PENGIRIM</label>
+            <input type="text" id="inPengirim" value="BAYU KURNIAWAN" oninput="updateStruk()">
+        </div>
+        <div class="input-group" style="flex:1">
+            <label>REK (4 DIGIT)</label>
+            <input type="text" id="inRekPengirim" value="0526" maxlength="4" oninput="updateStruk()">
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label>NAMA PENERIMA</label>
+        <input type="text" id="inPenerima" value="BY BAYU DUBAI" oninput="updateStruk()">
+    </div>
+
+    <div class="row-input">
+        <div class="input-group" style="flex:1.5">
+            <label>PILIH BANK (15 OPSI)</label>
+            <select id="inBank" onchange="updateStruk(); genID();">
+                <option value="BRI" data-len="15">Bank BRI</option>
+                <option value="BCA" data-len="10">Bank BCA</option>
+                <option value="MANDIRI" data-len="13">Bank Mandiri</option>
+                <option value="BNI" data-len="10">Bank BNI</option>
+                <option value="BSI" data-len="10">Bank Syariah Indonesia (BSI)</option>
+                <option value="CIMB" data-len="12">CIMB Niaga</option>
+                <option value="PERMATA" data-len="10">Bank Permata</option>
+                <option value="DANAMON" data-len="10">Bank Danamon</option>
+                <option value="BTPN" data-len="12">Bank BTPN / Jenius</option>
+                <option value="MAYBANK" data-len="10">Maybank</option>
+                <option value="OCBC" data-len="10">OCBC NISP</option>
+                <option value="PANIN" data-len="10">Bank Panin</option>
+                <option value="DANA" data-len="12">DANA</option>
+                <option value="OVO" data-len="12">OVO</option>
+                <option value="GOPAY" data-len="12">GoPay</option>
+            </select>
+        </div>
+        <div class="input-group" style="flex:1">
+            <label>REK (4 DIGIT)</label>
+            <input type="text" id="inRekPenerima" value="3531" maxlength="4" oninput="updateStruk()">
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label>NOMINAL TRANSFER</label>
+        <input type="number" id="inNominal" value="1000000" oninput="updateStruk()">
+    </div>
+
+    <button class="btn-action" onclick="saveToGallery()">📸 SIMPAN KE GALLERY</button>
+</div>
+
+<div id="capture-area">
+    <div class="receipt-container" id="struk">
+        <div class="watermark-overlay"></div>
+        <div class="content">
+            <div class="header">
+                <img src="wondr-logo.png" alt="wondr" class="logo-wondr">
+                <div class="status-text">Transfer berhasil</div>
+                <div class="amount-main" id="displayNominalMain">Rp1.000.000</div>
+                <div class="info-small" id="displayTime">-- -- 2026 • --:--:-- WIB</div>
+                <div class="info-small" id="displayRef">Ref ID: --</div>
+            </div>
+
+            <div class="section-title">Penerima</div>
+            <div class="name-bold" id="displayPenerima">BY BAYU DUBAI</div>
+            <div class="sub-detail"><span id="displayBank">BRI</span> • <span id="displayRekPenerima">***********3531</span></div>
+            <hr>
+
+            <div class="section-title">Sumber dana</div>
+            <div class="name-bold" id="displayPengirim">BAYU KURNIAWAN</div>
+            <div class="sub-detail" id="displayRekPengirim">*******0526</div>
+            <hr>
+
+            <div class="data-row" style="margin-top:15px;">
+                <span class="label">Nominal</span>
+                <span class="value" id="displayNominalRow">Rp1.000.000</span>
+            </div>
+            <div class="data-row">
+                <span class="label">Biaya transaksi</span>
+                <span class="value">Rp2.500</span>
+            </div>
+            <div class="data-row">
+                <span class="label">Metode transfer</span>
+                <span class="value">BI-FAST</span>
+            </div>
+            <div class="data-row">
+                <span class="label">BIZ ID</span>
+                <span class="value" id="displayBiz" style="font-size: 11px;">--</span>
+            </div>
+
+            <div class="dashed-line"></div>
+
+            <div class="total-row">
+                <span class="total-label">Total</span>
+                <span class="total-value" id="displayTotal">Rp1.002.500</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function formatRupiah(angka) {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka).replace("IDR", "Rp");
+    }
+
+    function updateStruk() {
+        const nominal = document.getElementById('inNominal').value || 0;
+        const total = parseInt(nominal) + 2500;
+        
+        document.getElementById('displayPengirim').innerText = document.getElementById('inPengirim').value;
+        document.getElementById('displayRekPengirim').innerText = "*******" + document.getElementById('inRekPengirim').value;
+        
+        const bankSelect = document.getElementById('inBank');
+        const bankName = bankSelect.value;
+        const bankLen = parseInt(bankSelect.options[bankSelect.selectedIndex].getAttribute('data-len'));
+        const rekPenerima4 = document.getElementById('inRekPenerima').value;
+        
+        const starCount = bankLen - rekPenerima4.length;
+        const stars = "*".repeat(starCount > 0 ? starCount : 6);
+        
+        document.getElementById('displayPenerima').innerText = document.getElementById('inPenerima').value;
+        document.getElementById('displayBank').innerText = bankName;
+        document.getElementById('displayRekPenerima').innerText = stars + rekPenerima4;
+        
+        document.getElementById('displayNominalMain').innerText = formatRupiah(nominal);
+        document.getElementById('displayNominalRow').innerText = formatRupiah(nominal);
+        document.getElementById('displayTotal').innerText = formatRupiah(total);
+    }
+
+    function genID() {
+        const d = new Date();
+        const tgl = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+        const randRef = Math.floor(Math.random() * 900000000000) + 100000000000;
+        const randBiz = Math.floor(Math.random() * 90000000) + 10000000;
+        document.getElementById('displayRef').innerText = "Ref ID: " + tgl + randRef;
+        document.getElementById('displayBiz').innerText = tgl + "BNINIDJA010" + randBiz;
+    }
+
+    function updateWaktu() {
+        const d = new Date();
+        const bulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+        const format = d.getDate() + " " + bulan[d.getMonth()] + " " + d.getFullYear() + " • " + 
+                       String(d.getHours()).padStart(2, '0') + ":" + 
+                       String(d.getMinutes()).padStart(2, '0') + ":" + 
+                       String(d.getSeconds()).padStart(2, '0') + " WIB";
+        document.getElementById('displayTime').innerText = format;
+    }
+
+    function saveToGallery() {
+        const area = document.getElementById('capture-area');
+        const btn = document.querySelector('.btn-action');
+        btn.innerText = "⏳ SEDANG MEMPROSES...";
+
+        html2canvas(area, {
+            useCORS: true,
+            scale: 3,
+            backgroundColor: "#ffffff"
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'Struk_wondr_BAYU_' + Date.now() + '.png';
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            btn.innerText = "📸 SIMPAN KE GALLERY";
+        });
+    }
+
+    setInterval(updateWaktu, 1000);
+    genID();
+    updateStruk();
+</script>
+
+</body>
+</html>
