@@ -3,193 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Struk wondr - 15 Bank</title>
+    <title>Struk wondr - Waktu Jakarta Otomatis</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-color: #f37021; }
+        :root { 
+            --text-black: #000000;
+            --text-grey: #757575;
+            --line-color: #D1D1D1;
+        }
+        
+        * {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: #2c3e50;
-            margin: 0;
+            background-color: #1e272e;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
-        }
-
-        /* PANEL KONTROL */
-        .admin-panel {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 420px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 100;
-        }
-        .admin-panel h3 { margin-top: 0; color: #333; font-size: 16px; border-bottom: 2px solid var(--primary-color); padding-bottom: 5px; text-transform: uppercase; }
-        .input-group { margin-bottom: 12px; }
-        .input-group label { display: block; font-size: 11px; color: #666; margin-bottom: 3px; font-weight: bold; }
-        .input-group input, .input-group select {
-            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none;
-        }
-        .row-input { display: flex; gap: 10px; }
-        
-        .btn-action { 
-            color: white; border: none; padding: 14px; 
-            width: 100%; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px;
-            text-transform: uppercase;
-            background: #27ae60;
-            font-size: 14px;
-        }
-
-        /* STRUK AREA */
-        #capture-area {
-            background-color: white;
             padding: 10px;
-            border-radius: 4px;
         }
+
+        .admin-panel {
+            background: white; padding: 12px; border-radius: 8px; width: 340px; margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 10;
+        }
+        .panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .input-group { margin-bottom: 8px; }
+        .input-group label { display: block; font-size: 10px; font-weight: bold; color: #333; margin-bottom: 2px; }
+        .input-group input, .input-group select { width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 11px; }
+        .flex-input { display: flex; align-items: center; background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px; padding-left: 8px; }
+        .flex-input span { font-size: 12px; color: #888; font-weight: bold; letter-spacing: 2px; }
+        .flex-input input { border: none; background: transparent; padding: 6px; width: 100%; }
+        .btn-action { width: 100%; padding: 10px; background: #27ae60; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; margin-top: 5px; }
+
+        #capture-area { background-color: white; padding: 0; position: relative; }
 
         .receipt-container {
-            width: 380px;
+            width: 300px;
             background-color: white;
+            padding: 22px 20px;
             position: relative;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            padding: 35px 22px;
         }
 
         .watermark-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('watermark.png'); 
-            background-repeat: repeat;
-            background-size: 100% auto; 
-            opacity: 0.08;
-            z-index: 0;
+            background-image: url('watermark.png');
+            background-repeat: repeat-y;
+            background-position: center top;
+            background-size: 100% auto;
+            opacity: 0.15;
+            z-index: 1;
             pointer-events: none;
         }
 
-        .content { position: relative; z-index: 1; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .logo-wondr { width: 165px; height: auto; margin-bottom: 40px; }
-        .status-text { font-size: 19px; font-weight: 600; color: #333; }
-        .amount-main { font-size: 34px; font-weight: 800; margin: 6px 0; color: #000; letter-spacing: -0.5px; }
-        .info-small { font-size: 12px; color: #777; margin: 1px 0; }
+        .content { position: relative; z-index: 2; }
+        .header { text-align: center; margin-bottom: 18px; }
+        .logo-wondr { width: 110px; margin-bottom: 22px; }
+        .status-text { font-size: 16px; font-weight: 600; color: var(--text-black); }
+        .amount-main { font-size: 28px; font-weight: 700; color: var(--text-black); margin: 2px 0; letter-spacing: -1px; }
+        .info-small { font-size: 10px; color: var(--text-grey); margin-bottom: 1px; }
 
-        hr { border: none; border-top: 1px solid #f2f2f2; margin: 15px 0; }
-        .section-title { font-size: 14px; font-weight: bold; color: #555; margin-bottom: 5px; }
-        .name-bold { font-size: 17px; font-weight: bold; color: #000; text-transform: uppercase; }
-        .sub-detail { font-size: 14px; color: #444; margin-top: 2px; }
+        .line-solid { border: none; border-top: 1.5px solid var(--line-color); opacity: 0.4; margin: 6px 0 10px 0; }
+        .line-dashed { border: none; border-top: 2px dashed var(--line-color); opacity: 0.4; margin: 12px 0; }
+        
+        .section-label { font-size: 12.5px; font-weight: 700; color: var(--text-black); margin-bottom: 0px; }
+        .name-detail { font-size: 12.5px; font-weight: 400; color: var(--text-black); }
+        .sub-detail { font-size: 11.5px; color: var(--text-grey); margin-top: 1px; }
 
-        .data-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
-        .label { color: #888; }
-        .value { color: #222; text-align: right; font-weight: 500; }
-        .dashed-line { border-top: 1.5px dashed #eee; margin: 25px 0; }
-        .total-row { display: flex; justify-content: space-between; align-items: center; }
-        .total-label { font-size: 17px; color: #666; }
-        .total-value { font-size: 26px; font-weight: 800; color: #000; }
+        .data-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; line-height: 1.2; }
+        .label { color: var(--text-grey); font-weight: 400; }
+        .value { color: var(--text-grey); text-align: right; font-weight: 400; max-width: 65%; }
+
+        .total-row { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+        .total-label { font-size: 14.5px; font-weight: 700; color: var(--text-black); }
+        .total-value { font-size: 23px; font-weight: 800; color: var(--text-black); }
     </style>
 </head>
 <body>
 
 <div class="admin-panel">
-    <h3>⚙️ EDITOR STRUK WONDR</h3>
-    
-    <div class="row-input">
-        <div class="input-group" style="flex:2">
-            <label>NAMA PENGIRIM</label>
-            <input type="text" id="inPengirim" value="BAYU KURNIAWAN" oninput="updateStruk()">
-        </div>
-        <div class="input-group" style="flex:1">
-            <label>REK (4 DIGIT)</label>
-            <input type="text" id="inRekPengirim" value="0526" maxlength="4" oninput="updateStruk()">
-        </div>
-    </div>
-
-    <div class="input-group">
-        <label>NAMA PENERIMA</label>
-        <input type="text" id="inPenerima" value="BY BAYU DUBAI" oninput="updateStruk()">
-    </div>
-
-    <div class="row-input">
-        <div class="input-group" style="flex:1.5">
-            <label>PILIH BANK (15 OPSI)</label>
-            <select id="inBank" onchange="updateStruk(); genID();">
-                <option value="BRI" data-len="15">Bank BRI</option>
-                <option value="BCA" data-len="10">Bank BCA</option>
-                <option value="MANDIRI" data-len="13">Bank Mandiri</option>
-                <option value="BNI" data-len="10">Bank BNI</option>
-                <option value="BSI" data-len="10">Bank Syariah Indonesia (BSI)</option>
-                <option value="CIMB" data-len="12">CIMB Niaga</option>
-                <option value="PERMATA" data-len="10">Bank Permata</option>
-                <option value="DANAMON" data-len="10">Bank Danamon</option>
-                <option value="BTPN" data-len="12">Bank BTPN / Jenius</option>
-                <option value="MAYBANK" data-len="10">Maybank</option>
-                <option value="OCBC" data-len="10">OCBC NISP</option>
-                <option value="PANIN" data-len="10">Bank Panin</option>
-                <option value="DANA" data-len="12">DANA</option>
-                <option value="OVO" data-len="12">OVO</option>
-                <option value="GOPAY" data-len="12">GoPay</option>
+    <div class="panel-grid">
+        <div class="input-group">
+            <label>BANK TUJUAN</label>
+            <select id="selBank" onchange="updateStruk()">
+                <option value="BRI">BRI</option>
+                <option value="BNI">BNI</option>
+                <option value="MANDIRI">Mandiri</option>
+                <option value="BTN">BTN</option>
+                <option value="BCA">BCA</option>
+                <option value="DANAMON">Danamon</option>
+                <option value="CIMB NIAGA">CIMB Niaga</option>
+                <option value="PERMATA">Permata Bank</option>
+                <option value="MAYBANK">Maybank</option>
+                <option value="PANIN">Panin Bank</option>
+                <option value="OCBC">OCBC NISP</option>
+                <option value="SEABANK">SeaBank</option>
+                <option value="BANK JAGO">Bank Jago</option>
+                <option value="ALOBANK">Allo Bank</option>
+                <option value="NEOBANK">NeoBank</option>
+                <option value="BLU BY BCA">blu by BCA</option>
+                <option value="DANA">DANA</option>
+                <option value="OVO">OVO</option>
+                <option value="GOPAY">GoPay</option>
+                <option value="SHOPEEPAY">ShopeePay</option>
             </select>
         </div>
-        <div class="input-group" style="flex:1">
-            <label>REK (4 DIGIT)</label>
-            <input type="text" id="inRekPenerima" value="3531" maxlength="4" oninput="updateStruk()">
-        </div>
+        <div class="input-group"><label>NOMINAL</label><input type="number" id="inNominal" value="1000000" oninput="updateStruk()"></div>
     </div>
-
+    <div class="input-group"><label>NAMA PENERIMA</label><input type="text" id="inPenerima" value="BY BAYU DUBAI" oninput="updateStruk()"></div>
     <div class="input-group">
-        <label>NOMINAL TRANSFER</label>
-        <input type="number" id="inNominal" value="1000000" oninput="updateStruk()">
+        <label>REK PENERIMA (4 Digit Akhir)</label>
+        <div class="flex-input"><span>*****</span><input type="text" id="inRekPenerima4" value="3531" maxlength="4" oninput="updateStruk()"></div>
     </div>
-
-    <button class="btn-action" onclick="saveToGallery()">📸 SIMPAN KE GALLERY</button>
+    <div class="input-group"><label>NAMA PENGIRIM</label><input type="text" id="inPengirim" value="BAYU KURNIAWAN" oninput="updateStruk()"></div>
+    <div class="input-group">
+        <label>REK PENGIRIM (4 Digit Akhir)</label>
+        <div class="flex-input"><span>*****</span><input type="text" id="inRekPengirim4" value="0526" maxlength="4" oninput="updateStruk()"></div>
+    </div>
+    <div class="input-group"><label>CATATAN</label><input type="text" id="inCatatan" value="dari thr bayu dubai" oninput="updateStruk()"></div>
+    <button class="btn-action" onclick="saveToGallery()">📸 SIMPAN STRUK</button>
 </div>
 
 <div id="capture-area">
-    <div class="receipt-container" id="struk">
+    <div class="receipt-container">
         <div class="watermark-overlay"></div>
         <div class="content">
             <div class="header">
                 <img src="wondr-logo.png" alt="wondr" class="logo-wondr">
                 <div class="status-text">Transfer berhasil</div>
                 <div class="amount-main" id="displayNominalMain">Rp1.000.000</div>
-                <div class="info-small" id="displayTime">-- -- 2026 • --:--:-- WIB</div>
-                <div class="info-small" id="displayRef">Ref ID: --</div>
+                <div id="displayTime" class="info-small">-- -- 2026 • --:--:-- WIB</div>
+                <div id="displayRef" class="info-small">Ref ID: --</div>
             </div>
 
-            <div class="section-title">Penerima</div>
-            <div class="name-bold" id="displayPenerima">BY BAYU DUBAI</div>
-            <div class="sub-detail"><span id="displayBank">BRI</span> • <span id="displayRekPenerima">***********3531</span></div>
-            <hr>
+            <div class="section-label">Penerima</div>
+            <div class="line-solid"></div>
+            <div class="name-detail" id="displayPenerima">BY BAYU DUBAI</div>
+            <div class="sub-detail"><span id="displayBankLabel">BRI</span> • <span id="displayRekPenerima">*****3531</span></div>
+            
+            <div style="height: 15px;"></div>
 
-            <div class="section-title">Sumber dana</div>
-            <div class="name-bold" id="displayPengirim">BAYU KURNIAWAN</div>
-            <div class="sub-detail" id="displayRekPengirim">*******0526</div>
-            <hr>
+            <div class="section-label">Sumber dana</div>
+            <div class="line-solid"></div>
+            <div class="name-detail" id="displayPengirim">BAYU KURNIAWAN</div>
+            <div class="sub-detail" id="displayRekPengirim">*****0526</div>
 
-            <div class="data-row" style="margin-top:15px;">
-                <span class="label">Nominal</span>
-                <span class="value" id="displayNominalRow">Rp1.000.000</span>
-            </div>
-            <div class="data-row">
-                <span class="label">Biaya transaksi</span>
-                <span class="value">Rp2.500</span>
-            </div>
-            <div class="data-row">
-                <span class="label">Metode transfer</span>
-                <span class="value">BI-FAST</span>
-            </div>
-            <div class="data-row">
-                <span class="label">BIZ ID</span>
-                <span class="value" id="displayBiz" style="font-size: 11px;">--</span>
-            </div>
+            <div style="height: 15px;"></div>
 
-            <div class="dashed-line"></div>
+            <div class="section-label">Detail transaksi</div>
+            <div class="line-solid"></div>
+            <div class="data-row"><span class="label">Nominal</span><span class="value" id="displayNominalRow">Rp1.000.000</span></div>
+            <div class="data-row"><span class="label">Biaya transaksi</span><span class="value">Rp2.500</span></div>
+            <div class="data-row"><span class="label">Metode transfer</span><span class="value">BI-FAST</span></div>
+            <div class="data-row"><span class="label">BIZ ID</span><span class="value" id="displayBiz" style="font-size: 10px;">--</span></div>
+            <div class="data-row"><span class="label">Tujuan transaksi</span><span class="value">Lainnya</span></div>
+            <div class="data-row"><span class="label">Catatan</span><span class="value" id="displayCatatan">dari thr bayu dubai</span></div>
 
+            <div class="line-dashed"></div>
             <div class="total-row">
                 <span class="total-label">Total</span>
                 <span class="total-value" id="displayTotal">Rp1.002.500</span>
@@ -204,70 +180,64 @@
     }
 
     function updateStruk() {
-        const nominal = document.getElementById('inNominal').value || 0;
-        const total = parseInt(nominal) + 2500;
-        
-        document.getElementById('displayPengirim').innerText = document.getElementById('inPengirim').value;
-        document.getElementById('displayRekPengirim').innerText = "*******" + document.getElementById('inRekPengirim').value;
-        
-        const bankSelect = document.getElementById('inBank');
-        const bankName = bankSelect.value;
-        const bankLen = parseInt(bankSelect.options[bankSelect.selectedIndex].getAttribute('data-len'));
-        const rekPenerima4 = document.getElementById('inRekPenerima').value;
-        
-        const starCount = bankLen - rekPenerima4.length;
-        const stars = "*".repeat(starCount > 0 ? starCount : 6);
-        
-        document.getElementById('displayPenerima').innerText = document.getElementById('inPenerima').value;
-        document.getElementById('displayBank').innerText = bankName;
-        document.getElementById('displayRekPenerima').innerText = stars + rekPenerima4;
-        
+        const nominal = parseInt(document.getElementById('inNominal').value) || 0;
+        document.getElementById('displayBankLabel').innerText = document.getElementById('selBank').value;
         document.getElementById('displayNominalMain').innerText = formatRupiah(nominal);
         document.getElementById('displayNominalRow').innerText = formatRupiah(nominal);
-        document.getElementById('displayTotal').innerText = formatRupiah(total);
+        document.getElementById('displayTotal').innerText = formatRupiah(nominal + 2500);
+        document.getElementById('displayPenerima').innerText = document.getElementById('inPenerima').value;
+        document.getElementById('displayRekPenerima').innerText = "*****" + document.getElementById('inRekPenerima4').value;
+        document.getElementById('displayPengirim').innerText = document.getElementById('inPengirim').value;
+        document.getElementById('displayRekPengirim').innerText = "*****" + document.getElementById('inRekPengirim4').value;
+        document.getElementById('displayCatatan').innerText = document.getElementById('inCatatan').value || "-";
     }
 
-    function genID() {
+    function initData() {
         const d = new Date();
-        const tgl = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
-        const randRef = Math.floor(Math.random() * 900000000000) + 100000000000;
-        const randBiz = Math.floor(Math.random() * 90000000) + 10000000;
-        document.getElementById('displayRef').innerText = "Ref ID: " + tgl + randRef;
-        document.getElementById('displayBiz').innerText = tgl + "BNINIDJA010" + randBiz;
-    }
+        
+        // Pengaturan zona waktu Asia/Jakarta
+        const optionsDate = { 
+            day: '2-digit', 
+            month: 'short', 
+            year: 'numeric', 
+            timeZone: 'Asia/Jakarta' 
+        };
+        const optionsTime = { 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit', 
+            hour12: false, 
+            timeZone: 'Asia/Jakarta' 
+        };
 
-    function updateWaktu() {
-        const d = new Date();
-        const bulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-        const format = d.getDate() + " " + bulan[d.getMonth()] + " " + d.getFullYear() + " • " + 
-                       String(d.getHours()).padStart(2, '0') + ":" + 
-                       String(d.getMinutes()).padStart(2, '0') + ":" + 
-                       String(d.getSeconds()).padStart(2, '0') + " WIB";
-        document.getElementById('displayTime').innerText = format;
+        const tgl = d.toLocaleDateString('id-ID', optionsDate);
+        const jam = d.toLocaleTimeString('id-ID', optionsTime).replace(/\./g, ':');
+        
+        document.getElementById('displayTime').innerText = `${tgl} • ${jam} WIB`;
+        
+        // Ref ID & Biz ID tetap menggunakan format tanggal lokal Jakarta
+        const tglID = d.toLocaleDateString('en-CA', {timeZone: 'Asia/Jakarta'}).replace(/-/g, '');
+        document.getElementById('displayRef').innerText = "Ref ID: " + tglID + Math.floor(Math.random()*1000000000);
+        document.getElementById('displayBiz').innerText = tglID + "BNIBRI010" + Math.floor(Math.random()*10000000);
     }
 
     function saveToGallery() {
-        const area = document.getElementById('capture-area');
-        const btn = document.querySelector('.btn-action');
-        btn.innerText = "⏳ SEDANG MEMPROSES...";
-
-        html2canvas(area, {
-            useCORS: true,
+        html2canvas(document.getElementById('capture-area'), { 
             scale: 3,
+            useCORS: true,
             backgroundColor: "#ffffff"
         }).then(canvas => {
             const link = document.createElement('a');
-            link.download = 'Struk_wondr_BAYU_' + Date.now() + '.png';
+            link.download = 'Struk_wondr_WIB.png';
             link.href = canvas.toDataURL("image/png");
             link.click();
-            btn.innerText = "📸 SIMPAN KE GALLERY";
         });
     }
 
-    setInterval(updateWaktu, 1000);
-    genID();
-    updateStruk();
+    window.onload = () => { 
+        initData(); 
+        updateStruk(); 
+    };
 </script>
-
 </body>
 </html>
